@@ -38,7 +38,6 @@ ENV PATH="/opt/gcc-linaro-7.5/bin:${PATH}"
 ENV CROSS_COMPILE=/opt/gcc-linaro-7.5/bin/aarch64-linux-gnu-
 ENV ARCH=arm64
 ENV ANDROID_MAJOR_VERSION=o
-ENV ANDROID_PLATFORM_VERSION=8.1.0
 
 WORKDIR /kernel
 
@@ -49,7 +48,10 @@ WORKDIR /kernel
 CMD bash -c "\
     echo '==> Toolchain: $(aarch64-linux-gnu-gcc --version | head -1)' && \
     make O=out ARCH=arm64 exynos7870-j7xelte_defconfig && \
+    rm -f out/drivers/net/wireless/bcmdhd_1_77/dhd_linux.o && \
     make O=out ARCH=arm64 CROSS_COMPILE=${CROSS_COMPILE} \
+         PLATFORM_VERSION=8.1.0 ANDROID_VERSION=8.1.0 \
          -j\$(nproc) Image.gz-dtb dtb.img 2>&1 | tee out/build.log && \
     echo '==> Done!' && \
     ls -lh out/arch/arm64/boot/Image.gz-dtb out/arch/arm64/boot/dtb.img 2>/dev/null"
+
