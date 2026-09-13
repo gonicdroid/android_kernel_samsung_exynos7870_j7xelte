@@ -926,13 +926,13 @@ ifeq ($(filter y,$(CONFIG_BCM43454) $(CONFIG_BCM43455)), y)
   DHDCFLAGS += -DDHD_SUPPORT_QA_6
 endif
 
-ifneq ($(PLATFORM_VERSION),)
+#ifneq ($(PLATFORM_VERSION),)
 # Android O OS use below features
-ifeq ($(shell expr $(PLATFORM_VERSION) \>= 8.0),1)
+#ifeq ($(shell expr $(PLATFORM_VERSION) \>= 8.0),1)
 # Use single nvram file
   DHDCFLAGS += -DDHD_USE_SINGLE_NVRAM_FILE
-endif
-endif
+#endif
+#endif
 
 ifneq ($(filter y,$(CONFIG_BCM43455) $(CONFIG_BCM43456)),$(filter m,$(CONFIG_BCM43455) $(CONFIG_BCM43456)))
 # Enable Firmware Coredump
@@ -1105,13 +1105,13 @@ endif
   DHDCFLAGS :=$(filter-out -DSUPPORT_P2P_GO_PS,$(DHDCFLAGS))
 # Generate .softap.info
   DHDCFLAGS += -DGEN_SOFTAP_INFO_FILE
-ifneq ($(PLATFORM_VERSION),)
+#ifneq ($(PLATFORM_VERSION),)
 # Android O OS use below features
-ifeq ($(shell expr $(PLATFORM_VERSION) \>= 8.0),1)
+#ifeq ($(shell expr $(PLATFORM_VERSION) \>= 8.0),1)
 # Use single nvram file
   DHDCFLAGS += -DDHD_USE_SINGLE_NVRAM_FILE
-endif
-endif
+#endif
+#endif
 endif
 
 ifneq ($(CONFIG_BCM43012),)
