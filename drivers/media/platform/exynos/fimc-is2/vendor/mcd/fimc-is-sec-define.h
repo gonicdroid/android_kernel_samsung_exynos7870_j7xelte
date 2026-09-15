@@ -121,6 +121,8 @@
 #define FIMC_IS_FW_2P2_12M				"fimc_is_fw2_2p2_12m.bin"
 #define FIMC_IS_FW_2P3				"fimc_is_fw2_2p3.bin"
 #ifdef USE_ONE_BINARY
+#define FIMC_IS_FW_GC5035			"fimc_is_lib.bin"
+#define FIMC_IS_FW_S5K5E9		    "fimc_is_lib.bin"
 #define FIMC_IS_FW_3M3				"fimc_is_lib.bin"
 #define FIMC_IS_FW_3L2				"fimc_is_lib.bin"
 #define FIMC_IS_FW_3P3				"fimc_is_lib.bin"
@@ -165,6 +167,8 @@
 #define FIMC_IS_4H5YC_SETF			"setfile_4h5yc.bin"
 #define FIMC_IS_3M3_SETF			"setfile_3m3.bin"
 #define FIMC_IS_3L2_SETF			"setfile_3l2.bin"
+#define FIMC_IS_5E9_SETF			"setfile_5e9.bin"
+#define FIMC_IS_5E9_FRONT_SETF			"setfile_5e9_front.bin"
 #define FIMC_IS_6B2_SETF			"setfile_6b2.bin"
 #define FIMC_IS_8B1_SETF			"setfile_8b1.bin"
 #define FIMC_IS_6D1_SETF			"setfile_6d1.bin"
@@ -177,6 +181,8 @@
 #define FIMC_IS_SR544_SETF			"setfile_sr544.bin"
 #define FIMC_IS_2P6_SETF			"setfile_2p6.bin"
 #define FIMC_IS_2P6_FRONT_SETF			"setfile_2p6_front.bin"
+#define FIMC_IS_GC5035_SETF			"setfile_gc5035.bin"
+
 #define FIMC_IS_COMPANION_MASTER_SETF			"companion_master_setfile.bin"
 #define FIMC_IS_COMPANION_MODE_SETF			"companion_mode_setfile.bin"
 #define FIMC_IS_COMPANION_2P2_MASTER_SETF			"companion_2p2_master_setfile.bin"
@@ -278,6 +284,7 @@ struct fimc_is_from_info {
 	char		project_name[FIMC_IS_PROJECT_NAME_SIZE + 1];
 	char		from_sensor_id[FIMC_IS_SENSOR_ID_SIZE + 1];
 	u8		module_id[FIMC_IS_MODULE_ID_SIZE + 1];
+	u8		eeprom_front_module_id[FIMC_IS_MODULE_ID_SIZE + 1];
 	bool		is_caldata_read;
 	bool		is_check_cal_reload;
 #ifdef CONFIG_COMPANION_USE
@@ -389,7 +396,13 @@ int fimc_is_sec_get_sysfs_finfo(struct fimc_is_from_info **finfo);
 int fimc_is_sec_get_sysfs_pinfo(struct fimc_is_from_info **pinfo);
 int fimc_is_sec_get_sysfs_finfo_front(struct fimc_is_from_info **finfo);
 int fimc_is_sec_get_sysfs_pinfo_front(struct fimc_is_from_info **pinfo);
+int fimc_is_sec_get_sysfs_finfo_rear2(struct fimc_is_from_info **finfo);
+int fimc_is_sec_get_sysfs_pinfo_rear2(struct fimc_is_from_info **pinfo);
+int fimc_is_sec_get_sysfs_finfo_rear3(struct fimc_is_from_info **finfo);
+int fimc_is_sec_get_sysfs_pinfo_rear3(struct fimc_is_from_info **pinfo);
 int fimc_is_sec_get_front_cal_buf(char **buf);
+int fimc_is_sec_get_rear2_cal_buf(char **buf);
+int fimc_is_sec_get_rear3_cal_buf(char **buf);
 
 int fimc_is_sec_get_cal_buf(char **buf);
 int fimc_is_sec_get_loaded_fw(char **buf);

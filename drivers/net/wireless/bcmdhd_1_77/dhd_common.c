@@ -1,7 +1,7 @@
 /*
  * Broadcom Dongle Host Driver (DHD), common DHD core.
  *
- * Copyright (C) 1999-2019, Broadcom Corporation
+ * Copyright (C) 1999-2018, Broadcom Corporation
  * 
  *      Unless you and Broadcom execute a separate written software license
  * agreement governing use of this software, this software is licensed to you
@@ -24,7 +24,7 @@
  *
  * <<Broadcom-WL-IPTag/Open:>>
  *
- * $Id: dhd_common.c 826783 2019-06-21 13:04:08Z $
+ * $Id: dhd_common.c 772708 2018-07-18 05:47:31Z $
  */
 #include <typedefs.h>
 #include <osl.h>
@@ -3392,7 +3392,7 @@ dhd_pktfilter_offload_set(dhd_pub_t * dhd, char *arg)
 	int 				rc;
 	uint32				mask_size;
 	uint32				pattern_size;
-	char				*argv[MAXPKT_ARG] = {0}, * buf = 0;
+	char				*argv[16], * buf = 0;
 	int					i = 0;
 	char				*arg_save = 0, *arg_org = 0;
 #define BUF_SIZE		2048
@@ -3420,13 +3420,8 @@ dhd_pktfilter_offload_set(dhd_pub_t * dhd, char *arg)
 	}
 
 	argv[i] = bcmstrtok(&arg_save, " ", 0);
-	while (argv[i++]) {
-		if (i >= MAXPKT_ARG) {
-			DHD_ERROR(("Invalid args provided\n"));
-			goto fail;
-		}
+	while (argv[i++])
 		argv[i] = bcmstrtok(&arg_save, " ", 0);
-	}
 
 	i = 0;
 	if (argv[i] == NULL) {

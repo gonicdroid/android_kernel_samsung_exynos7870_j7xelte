@@ -69,6 +69,8 @@ struct fimc_is_vender_specific {
 	struct i2c_client	*rear_cis_client;
 #endif
 	bool			running_rear_camera;
+	bool			running_rear2_camera;
+	bool			running_rear3_camera;
 	bool			running_front_camera;
 
 	char			*comp_int_pin; /* Companion PAF INT */
@@ -79,6 +81,7 @@ struct fimc_is_vender_specific {
 	/* dt */
 	u32			rear_sensor_id;
 	u32			rear_second_sensor_id;
+	u32			rear_third_sensor_id;
 	u32			front_sensor_id;
 #ifdef CONFIG_SECURE_CAMERA_USE
 	u32			secure_sensor_id;

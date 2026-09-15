@@ -51,6 +51,7 @@ struct cam_hw_param {
 struct cam_hw_param_collector {
 	struct cam_hw_param rear_hwparam;
 	struct cam_hw_param rear2_hwparam;
+	struct cam_hw_param rear3_hwparam;
 	struct cam_hw_param front_hwparam;
 	struct cam_hw_param iris_hwparam;
 } __attribute__((__packed__));
@@ -63,6 +64,8 @@ void fimc_is_sec_get_hw_param(struct cam_hw_param **hw_param, u32 position);
 int fimc_is_sec_get_rear_hw_param(struct cam_hw_param **hw_param);
 int fimc_is_sec_get_front_hw_param(struct cam_hw_param **hw_param);
 int fimc_is_sec_get_iris_hw_param(struct cam_hw_param **hw_param);
+int fimc_is_sec_get_rear2_hw_param(struct cam_hw_param **hw_param);
+int fimc_is_sec_get_rear3_hw_param(struct cam_hw_param **hw_param);
 bool fimc_is_sec_is_valid_moduleid(char* moduleid);
 #endif
 

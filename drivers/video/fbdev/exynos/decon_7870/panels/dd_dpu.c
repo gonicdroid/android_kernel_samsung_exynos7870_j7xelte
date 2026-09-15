@@ -22,6 +22,8 @@
 #include "../decon.h"
 #include "../decon_notify.h"
 
+#include "dd.h"
+
 static bool log_boot;
 #define dbg_info(fmt, ...)	pr_info(pr_fmt("%s: %3d: %s: " fmt), "dsim", __LINE__, __func__, ##__VA_ARGS__)
 #define dbg_warn(fmt, ...)	pr_warn(pr_fmt("%s: %3d: %s: " fmt), "dsim", __LINE__, __func__, ##__VA_ARGS__)
@@ -239,9 +241,6 @@ static int fb_notifier_callback(struct notifier_block *self,
 	if (evdata->info->node)
 		return NOTIFY_DONE;
 
-	dbg_info("%s: %d\n",
-		(event == FB_EVENT_BLANK) ? "FB_EVENT_BLANK" : "FB_EARLY_EVENT_BLANK", fb_blank);
-
 	log_boot = true;
 
 	if (event == FB_EVENT_BLANK && fb_blank == FB_BLANK_UNBLANK)
@@ -273,28 +272,23 @@ static ssize_t u32_array_write(struct file *f, const char __user *user_buf,
 	u32 *pending = data->pending;
 	int array_size = data->elements;
 
-	unsigned char wbuf[MAX_INPUT] = {0, };
+	unsigned char ibuf[MAX_INPUT] = {0, };
 	unsigned int tbuf[MAX_INPUT] = {0, };
 	unsigned int value, i;
 	char *pbuf, *token = NULL;
 	int ret = 0, end = 0;
 
-	if (*ppos != 0)
-		return 0;
-
-	if (count > sizeof(wbuf))
+	ret = dd_simple_write_to_buffer(ibuf, sizeof(ibuf), ppos, user_buf, count);
+	if (ret < 0) {
+		dbg_info("dd_simple_write_to_buffer fail: %d\n", ret);
 		goto exit;
+	}
 
-	ret = simple_write_to_buffer(wbuf, sizeof(wbuf) - 1, ppos, user_buf, count);
-	if (ret < 0)
-		goto exit;
-
-	wbuf[ret] = '\0';
-
-	pbuf = strim(wbuf);
-
+	pbuf = ibuf;
 	while (--array_size >= 0 && (token = strsep(&pbuf, " "))) {
 		dbg_info("%d, %s\n", array_size, token);
+		if (*token == '\0')
+			continue;
 		ret = kstrtou32(token, 0, &value);
 		if (ret < 0) {
 			dbg_info("kstrtou32 fail: ret: %d\n", ret);
@@ -487,17 +481,23 @@ static ssize_t status_write(struct file *f, const char __user *user_buf,
 					size_t count, loff_t *ppos)
 {
 	struct d_info *d = ((struct seq_file *)f->private_data)->private;
+	unsigned char ibuf[MAX_INPUT] = {0, };
+	int ret = 0;
 
-	if (*ppos != 0)
-		return 0;
+	ret = dd_simple_write_to_buffer(ibuf, sizeof(ibuf), ppos, user_buf, count);
+	if (ret < 0) {
+		dbg_info("dd_simple_write_to_buffer fail: %d\n", ret);
+		goto exit;
+	}
 
-	if (!strncmp(user_buf, "0", count - 1)) {
+	if (!strncmp(ibuf, "0", count - 1)) {
 		dbg_info("input is 0(zero). reset request parameter to default\n");
 
 		memcpy(d->request_param, d->default_param, sizeof(d->request_param));
 		memset(d->pending_param, 1, sizeof(d->pending_param));
 	}
 
+exit:
 	return count;
 }
 
@@ -557,16 +557,20 @@ static ssize_t regdump_write(struct file *f, const char __user *user_buf,
 	int ret = 0;
 	u32 reg = 0, val = 0;
 	void __iomem *ioregs = NULL;
-
-	if (*ppos != 0)
-		return 0;
+	unsigned char ibuf[MAX_INPUT] = {0, };
 
 	if (!d->enable) {
 		dbg_info("enable is %s\n", d->enable ? "on" : "off");
 		goto exit;
 	}
 
-	ret = sscanf(user_buf, "%x %x", &reg, &val);
+	ret = dd_simple_write_to_buffer(ibuf, sizeof(ibuf), ppos, user_buf, count);
+	if (ret < 0) {
+		dbg_info("dd_simple_write_to_buffer fail: %d\n", ret);
+		goto exit;
+	}
+
+	ret = sscanf(ibuf, "%x %x", &reg, &val);
 	if (clamp(ret, 1, 2) != ret) {
 		dbg_info("input is invalid, %d\n", ret);
 		goto exit;
@@ -675,9 +679,9 @@ static int help_show(struct seq_file *m, void *unused)
 		}
 	}
 	seq_puts(m, "\n");
-	seq_puts(m, "= DEFAULT: default booting paramter\n");
-	seq_puts(m, "= REQUEST: request paramter (not applied yet)\n");
-	seq_puts(m, "= CURRENT: current applied paramter\n");
+	seq_puts(m, "= DEFAULT: default booting parameter\n");
+	seq_puts(m, "= REQUEST: request parameter (not applied yet)\n");
+	seq_puts(m, "= CURRENT: current applied parameter\n");
 	seq_puts(m, "\n");
 
 
@@ -736,48 +740,13 @@ exit:
 	return ret;
 }
 
-static struct notifier_block dd_dpu_fb_notifier;
-
-static int fb_register_callback(struct notifier_block *self,
-			unsigned long event, void *data)
-{
-	struct fb_event *evdata = data;
-
-	switch (event) {
-	case FB_EVENT_FB_REGISTERED:
-		break;
-	default:
-		return NOTIFY_DONE;
-	}
-
-	if (evdata->info->node)
-		return NOTIFY_DONE;
-
-	init_debugfs_dpu();
-
-	fb_unregister_client(&dd_dpu_fb_notifier);
-
-	return NOTIFY_DONE;
-}
-
 static int __init dd_dpu_init(void)
 {
-	/* init_debugfs_dpu(); */
-
-	dd_dpu_fb_notifier.notifier_call = fb_register_callback;
-	fb_register_client(&dd_dpu_fb_notifier);
+	init_debugfs_dpu();
 
 	return 0;
 }
 
-static void __exit dd_dpu_exit(void)
-{
-	fb_unregister_client(&dd_dpu_fb_notifier);
-}
-
-/* we use fb notification instead of late_initcall */
-/* late_initcall(dd_dpu_init); */
-module_init(dd_dpu_init);
-module_exit(dd_dpu_exit);
+late_initcall(dd_dpu_init);
 #endif
 

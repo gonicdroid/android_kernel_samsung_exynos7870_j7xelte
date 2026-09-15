@@ -122,6 +122,8 @@ EXPORT_SYMBOL_GPL(s3c2410_serial_wake_peer);
 #define UART_LOOPBACK_MODE	(0x1 << 0)
 #define UART_DBG_MODE		(0x1 << 1)
 
+
+void s3c24xx_serial_rx_fifo_wait(void);
 /* Allocate 800KB of buffer for UART logging */
 #define LOG_BUFFER_SIZE		(0xC8000)
 
@@ -1499,7 +1501,7 @@ static int s3c24xx_serial_init_port(struct s3c24xx_uart_port *ourport,
 		return -ENODEV;
 
 	if (port->mapbase != 0)
-		return 0;
+		return -EINVAL;
 
 	/* setup info for port */
 	port->dev	= &platdev->dev;
@@ -1561,7 +1563,8 @@ static int s3c24xx_serial_init_port(struct s3c24xx_uart_port *ourport,
 	if (IS_ERR(ourport->clk)) {
 		pr_err("%s: Controller clock not found\n",
 				dev_name(&platdev->dev));
-		return PTR_ERR(ourport->clk);
+		ret = PTR_ERR(ourport->clk);
+		goto err;
 	}
 
 	if (ourport->check_separated_clk) {
@@ -1585,7 +1588,7 @@ static int s3c24xx_serial_init_port(struct s3c24xx_uart_port *ourport,
 	if (ret) {
 		pr_err("uart: clock failed to prepare+enable: %d\n", ret);
 		clk_put(ourport->clk);
-		return ret;
+		goto err;
 	}
 
 	/* Keep all interrupts masked and cleared */
@@ -1601,7 +1604,12 @@ static int s3c24xx_serial_init_port(struct s3c24xx_uart_port *ourport,
 
 	/* reset the fifos (and setup the uart) */
 	s3c24xx_serial_resetport(port, cfg);
+
 	return 0;
+
+err:
+	port->mapbase = 0;
+	return ret;
 }
 
 #ifdef CONFIG_SAMSUNG_CLOCK
@@ -1640,6 +1648,46 @@ static inline struct s3c24xx_serial_drv_data *s3c24xx_get_driver_data(
 	return (struct s3c24xx_serial_drv_data *)
 			platform_get_device_id(pdev)->driver_data;
 }
+
+void s3c24xx_serial_rx_fifo_wait(void)
+{
+   struct s3c24xx_uart_port *ourport;
+   struct uart_port *port;
+   unsigned int fifo_stat;
+   unsigned long wait_time;
+   unsigned int fifo_count;
+
+   fifo_count = 0;
+
+   list_for_each_entry(ourport, &drvdata_list, node) {
+       if (ourport->port.line != CONFIG_S3C_LOWLEVEL_UART_PORT)
+               continue;
+
+       port = &ourport->port;
+       fifo_stat = rd_regl(port, S3C2410_UFSTAT);
+       fifo_count = s3c24xx_serial_rx_fifocnt(ourport, fifo_stat);
+       if (fifo_count) {
+               uart_clock_enable(ourport);
+               __clear_bit(S3C64XX_UINTM_RXD, portaddrl(port, S3C64XX_UINTM));
+               uart_clock_disable(ourport);
+               rx_enabled(port) = 1;
+       }
+
+       wait_time = jiffies + HZ;
+       do {
+               port = &ourport->port;
+               fifo_stat = rd_regl(port, S3C2410_UFSTAT);
+               cpu_relax();
+       } while ( s3c24xx_serial_rx_fifocnt(ourport, fifo_stat) && time_before(jiffies, wait_time));
+
+       if (rx_enabled(port))
+               s3c24xx_serial_stop_rx(port);
+   }
+
+}
+
+EXPORT_SYMBOL_GPL(s3c24xx_serial_rx_fifo_wait);
+
 
 void s3c24xx_serial_fifo_wait(void)
 {
@@ -2054,6 +2102,8 @@ static int s3c24xx_serial_suspend(struct device *dev)
 	struct s3c24xx_uart_port *ourport = to_ourport(port);
 
 	if (port) {
+		udelay(300);//delay for sfr update
+		s3c24xx_serial_rx_fifo_wait();
 		uart_suspend_port(&s3c24xx_uart_drv, port);
 		if (ourport->dbg_mode & UART_DBG_MODE)
 			dev_err(dev, "UART suspend notification for tty framework.\n");

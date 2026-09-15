@@ -28,6 +28,7 @@
 #define DRIVER_NAME_REAR "rear-eeprom-i2c"
 #define DRIVER_NAME_FRONT "front-eeprom-i2c"
 #define DRIVER_NAME_REAR2 "rear2-eeprom-i2c"
+#define DRIVER_NAME_REAR3 "rear3-eeprom-i2c"
 #define REAR_DATA 0
 #define FRONT_DATA 1
 
@@ -131,7 +132,10 @@ static const struct of_device_id exynos_fimc_is_sensor_eeprom_match[] = {
 		.compatible = "samsung,front-eeprom-i2c", .data = (void *)SENSOR_POSITION_FRONT
 	},
 	{
-		.compatible = "samsung,rear2-eeprom-i2c",
+		.compatible = "samsung,rear2-eeprom-i2c", .data = (void *)SENSOR_POSITION_REAR2
+	},
+	{
+		.compatible = "samsung,rear3-eeprom-i2c", .data = (void *)SENSOR_POSITION_REAR3
 	},
 	{},
 };
@@ -141,6 +145,7 @@ static const struct i2c_device_id sensor_eeprom_idt[] = {
 	{ DRIVER_NAME_REAR, SENSOR_POSITION_REAR },
 	{ DRIVER_NAME_FRONT, SENSOR_POSITION_FRONT },
 	{ DRIVER_NAME_REAR2, SENSOR_POSITION_REAR2 },
+	{ DRIVER_NAME_REAR3, SENSOR_POSITION_REAR3 },
 	{},
 };
 
