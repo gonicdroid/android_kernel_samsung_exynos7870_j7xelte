@@ -1,11 +1,14 @@
 # SPDX-License-Identifier: GPL-2.0
-dtb-y += exynos7870-j7velte_ltn_dtv_01.dtb
-dtb-y += exynos7870-j7velte_ltn_dtv_03.dtb
+quote := "
+DTB_NAMES := $(subst $(quote),,$(CONFIG_BUILD_ARM64_APPENDED_DTB_IMAGE_NAMES))
 
-targets += dtbs
-DTB_LIST  := $(dtb-y) $(dtbo-y)
-always    := $(DTB_LIST)
+ifneq ($(DTB_NAMES),)
+dtb-y += $(addsuffix .dtb, $(DTB_NAMES))
+endif
 
-dtbs: $(addprefix $(obj)/, $(DTB_LIST))
+targets += dtbs $(dtb-y)
+always  += $(dtb-y)
 
-clean-files := *.dtb*
+dtbs: $(addprefix $(obj)/, $(dtb-y))
+
+clean-files := dts/*.dtb *.dtb

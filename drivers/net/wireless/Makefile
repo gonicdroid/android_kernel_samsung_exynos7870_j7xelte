@@ -71,19 +71,19 @@ endif
 endif
 
 ifneq ($(CONFIG_BCM4343),)
-ifeq ($(shell expr $(MAJOR_VERSION) \>= 9),1)
+#ifeq ($(shell expr $(MAJOR_VERSION) \>= 9),1)
 $(warning platform version 3 : $(PLATFORM_VERSION))
 $(warning MAJOR_VERSION version 3: $(MAJOR_VERSION))
 obj-$(CONFIG_BCM4343)   += bcmdhd_100_10/
 obj-$(CONFIG_BCM4343) += bcmdhd_100_10/dhd_custom_memprealloc.o
 obj-$(CONFIG_BCM4343) += bcmdhd_100_10/dhd_custom_exynos.o
-else
-$(warning platform version 4 : $(PLATFORM_VERSION))
-$(warning MAJOR_VERSION version 4: $(MAJOR_VERSION))
-obj-$(CONFIG_BCM4343)	+= bcmdhd_1_77/
-obj-$(CONFIG_BCM4343)	+= bcmdhd_1_77/dhd_custom_exynos.o
-obj-$(CONFIG_BCM4343)	+= bcmdhd_1_77/dhd_custom_memprealloc.o
-endif
+#else
+#$(warning platform version 4 : $(PLATFORM_VERSION))
+#$(warning MAJOR_VERSION version 4: $(MAJOR_VERSION))
+#obj-$(CONFIG_BCM4343)	+= bcmdhd_1_77/
+#obj-$(CONFIG_BCM4343)	+= bcmdhd_1_77/dhd_custom_exynos.o
+#obj-$(CONFIG_BCM4343)	+= bcmdhd_1_77/dhd_custom_memprealloc.o
+#endif
 endif
 
 ifneq ($(CONFIG_BCM43454),)
