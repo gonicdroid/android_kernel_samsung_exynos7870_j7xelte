@@ -12,18 +12,17 @@
 /dts-v1/;
 #include "exynos7870-j7velte_common.dtsi"
 #include "modem-ss315ap-pdata.dtsi"
-#include "exynos7870-j7velte_ltn_dtv_gpio_03.dtsi"
+#include "exynos7870-j7velte_sea_open_gpio_03.dtsi"
 #include "z_batterydata_j7velte_common.dtsi"
-#include "exynos7870-j7velte_ltn_dtv-isdbt_00.dtsi"
 
 / {
-	model = "Samsung J7VE LTE LTN DTV rev02A board based on Exynos7870";
+	model = "Samsung J7VE LTE SEA rev02A board based on Exynos7870";
         model_info-chip = <7870>;
         model_info-platform = "android";
         model_info-subtype = "samsung";
         model_info-hw_rev = <3>;
         model_info-hw_rev_end = <255>;
-	compatible = "samsung, J7VE LTE LTN DTV 02A", "samsung,exynos7870";
+	compatible = "samsung, J7VE LTE SEA OPEN 02A", "samsung,exynos7870";
 
 	i2c@13870000 {
 		status = "okay";
@@ -364,31 +363,6 @@
 			};
 		};
 
-		audio_codec_cod3026x: cod3026x@04 {
-			compatible = "codec,cod3026x";
-			reg = <0x04>;
-			ten-bit-address;
-			vdd-supply = <&ldo25_reg>;
-			pinctrl-names = "default";
-			pinctrl-0 = <&cod3026_irq>;
-			interrupt-parent = <&gpa0>;
-			gpios = <&gpa0 4 0xf>;
-			ant-det-gpio = <&gpa2 6 0xf>;
-			mic-bias1-voltage = <1>;
-			mic-bias2-voltage = <1>;
-			mic-bias-ldo-voltage = <3>;
-			use-det-adc-mode;
-			io-channels = <&exynos_adc 2>;
-			io-channel-names = "adc-jack";
-			#io-channel-cells = <1>;
-			io-channel-ranges;
-			but-zones-list = <&but_zones 226 0 271>, /* send/end */
-					<&but_zones 582 272 347>, /* google */
-					<&but_zones 115 348 542>, /* vol up */
-					<&but_zones 114 543 1000>; /* vol down */
-			mic-adc-range = <1371>;
-			ant-adc-range = <3400>;
-		};
 	};
 
 	wlan {

@@ -18,7 +18,7 @@
 		PIN_IN(etc0-3, DOWN, LV1);	/* NC */
 
 		PIN_OUT_SET(gpa1-3, 0, LV1);	/* FM_LNA_EN */
-		PIN_IN(gpa2-6, NONE, LV1);	/* EAR_ANT_DET */
+		PIN_IN(gpa1-5, DOWN, LV1);	/* NC */
 
 		PIN_IN(gpq0-0, DOWN, LV1);	/* NC */
 		PIN_IN(gpq0-1, DOWN, LV1);	/* NC */
@@ -141,10 +141,10 @@
 		PIN_SLP(gpc5-0, INPUT, NONE);	/* PROXY_SDA_1P8 */
 		PIN_SLP(gpc5-1, INPUT, NONE);	/* PROXY_SCL_1P8 */
 
-		PIN_SLP(gpc6-0, INPUT, DOWN);	/* TDMB_SPI_CLK */
-		PIN_SLP(gpc6-1, INPUT, DOWN);	/* TDMB_SPI_CS_N */
-		PIN_SLP(gpc6-2, INPUT, DOWN);	/* TDMB_SPI_MISO */
-		PIN_SLP(gpc6-3, INPUT, DOWN);	/* TDMB_SPI_MOSI */
+		PIN_SLP(gpc6-0, INPUT, DOWN);	/* NC */
+		PIN_SLP(gpc6-1, INPUT, DOWN);	/* NC */
+		PIN_SLP(gpc6-2, INPUT, DOWN);	/* NC */
+		PIN_SLP(gpc6-3, INPUT, DOWN);	/* NC */
 
 		PIN_SLP(gpc8-0, INPUT, NONE);	/* TOUCH_SDA_1P8 */
 		PIN_SLP(gpc8-1, INPUT, NONE);	/* TOUCH_SCL_1P8 */
@@ -174,7 +174,7 @@
 		PIN_SLP(gpd3-4, PREV, NONE);	/* MLCD_RST */
 		PIN_SLP(gpd3-5, INPUT, DOWN);	/* OCTA_ID */
 		PIN_SLP(gpd3-6, PREV, NONE);	/* WLAN_EN */
-		PIN_SLP(gpd3-7, INPUT, DOWN);	/* ISDBT_PWR_EN1 */
+		PIN_SLP(gpd3-7, INPUT, DOWN);	/* NC */
 
 		PIN_SLP(gpd4-0, PREV, NONE);	/* BT_EN */
 		PIN_SLP(gpd4-1, INPUT, DOWN);	/* NC */
@@ -182,7 +182,7 @@
 		PIN_SLP(gpd4-3, INPUT, DOWN);	/* NC */
 		PIN_SLP(gpd4-4, INPUT, DOWN);	/* CAM_SENSOR_CORE_EN */
 		PIN_SLP(gpd4-5, INPUT, DOWN);	/* NC */
-		PIN_SLP(gpd4-6, INPUT, DOWN);	/* FM_DTV_CTRL */
+		PIN_SLP(gpd4-6, INPUT, DOWN);	/* NC */
 
 		PIN_SLP(gpe0-0, INPUT, DOWN);	/* CAM_MCLK */
 		PIN_SLP(gpe0-1, INPUT, DOWN);	/* VTCAM_MCLK */
@@ -204,10 +204,10 @@
 		PIN_SLP(gpf3-2, INPUT, DOWN);	/* VDD_CAM_IO_1P8_EN */
 		PIN_SLP(gpf3-3, INPUT, DOWN);	/* CAM_RST */
 
-		PIN_SLP(gpf4-0, INPUT, DOWN);	/* ISDBT_SPI_CLK */
-		PIN_SLP(gpf4-1, INPUT, DOWN);	/* ISDBT_SPI_CS_N */
-		PIN_SLP(gpf4-2, INPUT, DOWN);	/* ISDBT_SPI_MISO */
-		PIN_SLP(gpf4-3, INPUT, DOWN);	/* ISDBT_SPI_MOSI */
+		PIN_SLP(gpf4-0, INPUT, DOWN);	/* NC */
+		PIN_SLP(gpf4-1, INPUT, DOWN);	/* NC */
+		PIN_SLP(gpf4-2, INPUT, DOWN);	/* NC */
+		PIN_SLP(gpf4-3, INPUT, DOWN);	/* NC */
 		PIN_SLP(gpf4-4, INPUT, DOWN);	/* NC */
 	};
 };

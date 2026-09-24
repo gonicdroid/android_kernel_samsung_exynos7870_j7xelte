@@ -12,18 +12,17 @@
 /dts-v1/;
 #include "exynos7870-j7velte_common.dtsi"
 #include "modem-ss315ap-pdata.dtsi"
-#include "exynos7870-j7velte_ltn_dtv_gpio_03.dtsi"
+#include "exynos7870-j7velte_ltn_open_gpio_01.dtsi"
 #include "z_batterydata_j7velte_common.dtsi"
-#include "exynos7870-j7velte_ltn_dtv-isdbt_00.dtsi"
 
 / {
-	model = "Samsung J7VE LTE LTN DTV rev02A board based on Exynos7870";
+	model = "Samsung J7VE LTE LTN rev01 board based on Exynos7870";
         model_info-chip = <7870>;
         model_info-platform = "android";
         model_info-subtype = "samsung";
-        model_info-hw_rev = <3>;
-        model_info-hw_rev_end = <255>;
-	compatible = "samsung, J7VE LTE LTN DTV 02A", "samsung,exynos7870";
+        model_info-hw_rev = <1>;
+        model_info-hw_rev_end = <2>;
+	compatible = "samsung, J7VE LTE LTN OPEN 01", "samsung,exynos7870";
 
 	i2c@13870000 {
 		status = "okay";
@@ -373,7 +372,6 @@
 			pinctrl-0 = <&cod3026_irq>;
 			interrupt-parent = <&gpa0>;
 			gpios = <&gpa0 4 0xf>;
-			ant-det-gpio = <&gpa2 6 0xf>;
 			mic-bias1-voltage = <1>;
 			mic-bias2-voltage = <1>;
 			mic-bias-ldo-voltage = <3>;
@@ -387,7 +385,6 @@
 					<&but_zones 115 348 542>, /* vol up */
 					<&but_zones 114 543 1000>; /* vol down */
 			mic-adc-range = <1371>;
-			ant-adc-range = <3400>;
 		};
 	};
 
@@ -423,7 +420,6 @@
 				&gpa1 6 0xF	/*BT_HOST_WAKE*/ >;
 		pinctrl-names = "default";
 		pinctrl-0=<&bt_hostwake &bt_btwake &bt_en>;
-		fm-lna-en = <&gpa1 3 1>;
 		status = "okay";
 	};
 
